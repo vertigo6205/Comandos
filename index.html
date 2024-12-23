@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página Dinámica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f4f4f4;
+      padding: 10px;
+      text-align: center;
+    }
+    nav select {
+      padding: 5px;
+    }
+    iframe {
+      flex-grow: 1;
+      width: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Comandos v.01</h1>
+  </header>
+  <nav>
+    <select id="pageSelector">
+      <option value="">Selecciona una página...</option>
+      <option value="ConfigurarIP.html">1-Configurar IP</option>
+      <option value="ReactJS.html">2-React.js</option>
+      <option value="Powershell1.html">3-Powershell1</option>
+    </select>
+  </nav>
+  <iframe id="contentFrame" src=""></iframe>
+
+  <script>
+    const pageSelector = document.getElementById('pageSelector');
+    const contentFrame = document.getElementById('contentFrame');
+
+    pageSelector.addEventListener('change', () => {
+      const selectedPage = pageSelector.value;
+      if (selectedPage) {
+        contentFrame.src = selectedPage;
+      }
+    });
+  </script>
+</body>
+</html>

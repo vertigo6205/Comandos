@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ejemplo de Grupos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; 
+      margin: 20px;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      margin-bottom: 0;
+    }
+    h2 {
+      margin: 20px 0 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Reacj.js</h1>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // Variable interna con datos de ejemplo
+    const grupos = [
+    {
+  titulo: "Inicio de Proyecto",
+  comandos: [
+    { comando: "npx create-react-app nombre-del-proyecto", descripcion: "Crea un nuevo proyecto de React con la configuración inicial." },
+    { comando: "cd nombre-del-proyecto", descripcion: "Accede al directorio del proyecto recién creado." },
+    { comando: "npm start", descripcion: "Inicia el servidor de desarrollo para visualizar la aplicación en el navegador." }
+  ]
+},
+{
+  titulo: "Gestión de Dependencias",
+  comandos: [
+    { comando: "npm install paquete", descripcion: "Instala un paquete específico en el proyecto." },
+    { comando: "npm install --save paquete", descripcion: "Instala un paquete y lo añade como dependencia en package.json." },
+    { comando: "npm uninstall paquete", descripcion: "Elimina un paquete del proyecto y de package.json." }
+  ]
+},
+{
+  titulo: "Desarrollo de Componentes",
+  comandos: [
+    { comando: "npm install styled-components", descripcion: "Instala la biblioteca para estilos en React usando componentes." },
+    { comando: "npm install react-router-dom", descripcion: "Instala React Router para manejar la navegación entre páginas." },
+    { comando: "npm install axios", descripcion: "Instala Axios para realizar solicitudes HTTP." }
+  ]
+},
+{
+  titulo: "Testing",
+  comandos: [
+    { comando: "npm test", descripcion: "Ejecuta las pruebas definidas en el proyecto." },
+    { comando: "npm install --save-dev jest", descripcion: "Instala Jest como framework de pruebas para React." },
+    { comando: "npm install --save-dev @testing-library/react", descripcion: "Instala Testing Library para realizar pruebas de componentes React." }
+  ]
+},
+{
+  titulo: "Compilación y Producción",
+  comandos: [
+    { comando: "npm run build", descripcion: "Genera una versión optimizada de la aplicación lista para producción." },
+    { comando: "serve -s build", descripcion: "Sirve la versión compilada en un servidor local para pruebas finales." },
+    { comando: "npm install -g serve", descripcion: "Instala Serve como herramienta para servir aplicaciones estáticas en producción." }
+  ]
+},
+{
+  titulo: "Optimización y Herramientas",
+  comandos: [
+    { comando: "npm install --save-dev webpack", descripcion: "Instala Webpack para personalizar la configuración del proyecto." },
+    { comando: "npm install dotenv", descripcion: "Instala dotenv para manejar variables de entorno en el proyecto." },
+    { comando: "npm audit fix", descripcion: "Repara automáticamente vulnerabilidades en las dependencias." }
+  ]
+}
+
+    ];
+
+    // Generar el contenido dinámico
+    const app = document.getElementById("app");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+    grupos.forEach(grupo => {
+      // Título del grupo
+      const h2 = document.createElement("h2");
+      h2.textContent = grupo.titulo;
+      app.appendChild(h2);
+
+      // Crear tabla
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = `
+        <tr>
+          <th>Comando</th>
+          <th>Descripción</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      grupo.comandos.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.comando}</td>
+          <td>${item.descripcion}</td>
+        `;
+
+        // Añadir evento de clic para copiar
+        row.addEventListener("click", () => {
+          navigator.clipboard.writeText(item.comando)
+            .then(() => {
+              showToast(`Comando copiado: ${item.comando}`);
+            })
+            .catch(err => {
+              console.error("Error al copiar al portapapeles", err);
+            });
+        });
+
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+
+      app.appendChild(table);
+    });
+  </script>
+</body>
+</html>

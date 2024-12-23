@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ejemplo de Grupos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; 
+      margin: 20px;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      margin-bottom: 0;
+    }
+    h2 {
+      margin: 20px 0 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>PowerShell-1</h1>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // Variable interna con datos de ejemplo
+    const grupos = [
+    {
+  titulo: "Gestión de Archivos y Carpetas",
+  comandos: [
+    { comando: "Remove-Item -Path 'C:\\Ruta\\Archivo.txt'", descripcion: "Elimina un archivo específico." },
+    { comando: "Remove-Item -Path 'C:\\Ruta\\Carpeta' -Recurse", descripcion: "Elimina una carpeta completa y su contenido." },
+    { comando: "Get-ChildItem -Path 'C:\\Ruta' -Recurse", descripcion: "Lista todos los archivos y carpetas, incluyendo subdirectorios." },
+    { comando: "Clear-Content -Path 'C:\\Ruta\\Archivo.txt'", descripcion: "Vacía el contenido de un archivo sin eliminarlo." },
+    { comando: "New-Item -Path 'C:\\Ruta\\NuevoArchivo.txt' -ItemType File", descripcion: "Crea un archivo vacío en la ruta especificada." }
+  ]
+},
+{
+  titulo: "Copiar y Mover Archivos/Carpetas",
+  comandos: [
+    { comando: "Copy-Item -Path 'C:\\Origen\\Archivo.txt' -Destination 'C:\\Destino'", descripcion: "Copia un archivo a otra ubicación." },
+    { comando: "Copy-Item -Path 'C:\\Origen\\*' -Destination 'C:\\Destino' -Recurse", descripcion: "Copia todos los archivos y subcarpetas de una carpeta a otra." },
+    { comando: "Move-Item -Path 'C:\\Origen\\Archivo.txt' -Destination 'C:\\Destino'", descripcion: "Mueve un archivo a otra ubicación." },
+    { comando: "Move-Item -Path 'C:\\Origen\\Carpeta' -Destination 'C:\\Destino'", descripcion: "Mueve una carpeta completa a otra ubicación." }
+  ]
+},
+{
+  titulo: "Renombrar Archivos y Carpetas",
+  comandos: [
+    { comando: "Rename-Item -Path 'C:\\Ruta\\Archivo.txt' -NewName 'NuevoArchivo.txt'", descripcion: "Renombra un archivo." },
+    { comando: "Rename-Item -Path 'C:\\Ruta\\Carpeta' -NewName 'NuevaCarpeta'", descripcion: "Renombra una carpeta." }
+  ]
+},
+{
+  titulo: "Buscar Archivos y Carpetas",
+  comandos: [
+    { comando: "Get-ChildItem -Path 'C:\\Ruta' -Filter '*.txt'", descripcion: "Busca todos los archivos .txt en la carpeta especificada." },
+    { comando: "Get-ChildItem -Path 'C:\\Ruta' -Recurse -Filter '*.log'", descripcion: "Busca recursivamente todos los archivos .log en una carpeta y sus subcarpetas." },
+    { comando: "Get-ChildItem -Path 'C:\\Ruta' | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) }", descripcion: "Lista los archivos modificados en los últimos 7 días." }
+  ]
+},
+{
+  titulo: "Atributos y Propiedades",
+  comandos: [
+    { comando: "Set-ItemProperty -Path 'C:\\Ruta\\Archivo.txt' -Name IsReadOnly -Value $true", descripcion: "Marca un archivo como solo lectura." },
+    { comando: "Get-ItemProperty -Path 'C:\\Ruta\\Archivo.txt'", descripcion: "Obtiene las propiedades de un archivo o carpeta." },
+    { comando: "Set-ItemProperty -Path 'C:\\Ruta\\Carpeta' -Name Attributes -Value Hidden", descripcion: "Oculta una carpeta marcándola como oculta." }
+  ]
+}
+
+
+    ];
+
+    // Generar el contenido dinámico
+    const app = document.getElementById("app");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+    grupos.forEach(grupo => {
+      // Título del grupo
+      const h2 = document.createElement("h2");
+      h2.textContent = grupo.titulo;
+      app.appendChild(h2);
+
+      // Crear tabla
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = `
+        <tr>
+          <th>Comando</th>
+          <th>Descripción</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      grupo.comandos.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.comando}</td>
+          <td>${item.descripcion}</td>
+        `;
+
+        // Añadir evento de clic para copiar
+        row.addEventListener("click", () => {
+          navigator.clipboard.writeText(item.comando)
+            .then(() => {
+              showToast(`Comando copiado: ${item.comando}`);
+            })
+            .catch(err => {
+              console.error("Error al copiar al portapapeles", err);
+            });
+        });
+
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+
+      app.appendChild(table);
+    });
+  </script>
+</body>
+</html>

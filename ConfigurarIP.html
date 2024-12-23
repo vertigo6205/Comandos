@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ejemplo de Grupos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; 
+      margin: 20px;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      margin-bottom: 0;
+    }
+    h2 {
+      margin: 20px 0 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>cmd-1</h1>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // Variable interna con datos de ejemplo
+    const grupos = [
+    {
+  "titulo": "Comandos para configurar IP estática en CMD",
+  "comandos": [
+    {
+      "comando": "netsh interface show interface",
+      "descripcion": "Lista todas las interfaces de red disponibles en el sistema, permitiendo identificar el nombre exacto de la interfaz que deseas configurar."
+    },
+    {
+      "comando": "netsh interface ipv4 set address name=\"NombreInterfaz\" static IP_DIRECCION MASCARA_SUBRED PUERTA_ENLACE",
+      "descripcion": "Configura una dirección IP estática. Reemplaza 'NombreInterfaz' por el nombre de tu red, 'IP_DIRECCION' por la dirección IP deseada, 'MASCARA_SUBRED' por la máscara de subred y 'PUERTA_ENLACE' por la puerta de enlace predeterminada."
+    },
+    {
+      "comando": "netsh interface ipv4 set dns name=\"NombreInterfaz\" static DNS_PREFERIDO",
+      "descripcion": "Configura un servidor DNS primario. Reemplaza 'NombreInterfaz' por el nombre de tu red y 'DNS_PREFERIDO' por la dirección IP del servidor DNS preferido."
+    },
+    {
+      "comando": "netsh interface ipv4 add dns name=\"NombreInterfaz\" address=DNS_ALTERNATIVO index=2",
+      "descripcion": "Añade un servidor DNS secundario. Reemplaza 'NombreInterfaz' por el nombre de tu red y 'DNS_ALTERNATIVO' por la dirección IP del servidor DNS alternativo."
+    },
+    {
+      "comando": "ipconfig /all",
+      "descripcion": "Muestra la configuración actual de la red, incluyendo la IP, máscara de subred, puerta de enlace y servidores DNS configurados."
+    },
+    {
+      "comando": "ping 8.8.8.8",
+      "descripcion": "Comprueba la conectividad de la red enviando paquetes ICMP al servidor DNS público de Google."
+    },
+    {
+      "comando": "netsh interface ipv4 set address name=\"NombreInterfaz\" source=dhcp",
+      "descripcion": "Reconfigura la interfaz de red para obtener una dirección IP automáticamente mediante DHCP."
+    },
+    {
+      "comando": "netsh interface ipv4 set dns name=\"NombreInterfaz\" source=dhcp",
+      "descripcion": "Reconfigura la interfaz de red para obtener los servidores DNS automáticamente mediante DHCP."
+    }
+  ]
+}
+
+    ];
+
+    // Generar el contenido dinámico
+    const app = document.getElementById("app");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+    grupos.forEach(grupo => {
+      // Título del grupo
+      const h2 = document.createElement("h2");
+      h2.textContent = grupo.titulo;
+      app.appendChild(h2);
+
+      // Crear tabla
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = `
+        <tr>
+          <th>Comando</th>
+          <th>Descripción</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      grupo.comandos.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.comando}</td>
+          <td>${item.descripcion}</td>
+        `;
+
+        // Añadir evento de clic para copiar
+        row.addEventListener("click", () => {
+          navigator.clipboard.writeText(item.comando)
+            .then(() => {
+              showToast(`Comando copiado: ${item.comando}`);
+            })
+            .catch(err => {
+              console.error("Error al copiar al portapapeles", err);
+            });
+        });
+
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+
+      app.appendChild(table);
+    });
+  </script>
+</body>
+</html>
